@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-@SpringBootApplication
 @RestController
+@SpringBootApplication(scanBasePackages={"com.bhardwaj.MoodGuardian"})
 public class MoodGuardianApplication {
 
 	public static void main(String[] args) {
