@@ -14,7 +14,7 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
   PostgreSQL:
-    image: postgres:15.2-alpine.env
+    image: postgres:15.2-alpine
     restart: always
     container_name: postgresql
     ports:
