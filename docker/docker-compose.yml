@@ -1,6 +1,9 @@
 version: '3.8'
 services:
   MoodGuardian:
+    build:
+      context: ..
+      dockerfile: Dockerfile
     image: 'moodguardian'
     ports:
       - "8080:8080"
