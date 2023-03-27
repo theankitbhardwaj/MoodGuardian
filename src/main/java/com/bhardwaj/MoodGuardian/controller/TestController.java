@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/api/test")
+@RequestMapping("/api/v1/test")
 public class TestController {
     @GetMapping("/all")
     public String AllAccess(){
