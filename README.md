@@ -14,7 +14,7 @@ This application exposes APIs that can be used to create a full stack Mood Track
 | `username` | `string` | **Required**. Your unique username |
 | `email` | `string` | **Required**. Your unique email |
 | `password` | `string` | **Required**. Password  for account |
-| `role` | `List of roles` |  Role to be provided to user (MODERATOR,USER,ADMIN) |
+| `role` | `List of roles` |  Role to be provided to user (ROLE_MOD,ROLE_USER,ROLE_ADMIN) |
 
 #### Sign In:
 
