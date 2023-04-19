@@ -82,14 +82,18 @@ You also need to authorize this request.
 
 ## Run Locally
 
+#### Step 1: 
 Clone the project
 
 ```bash
   git clone https://github.com/theankitbhardwaj/MoodGuardian
 ```
 
+#### Step 2: 
+Create .env files in ./src/main/resources and ./docker folder using examples provided.
 
-Before doing further steps please ensure you have docker installed.
+
+### Before doing further steps please ensure you have docker installed.
 
 Go to the docker directory under project root
 
@@ -107,6 +111,13 @@ Start the containers
 
 ```bash
   docker-compose up
+```
+
+Also, please insert roles in Roles table by using below SQL Statements for the first time setting up database.
+```bash
+INSERT INTO roles(name) VALUES('ROLE_USER');
+INSERT INTO roles(name) VALUES('ROLE_MODERATOR');
+INSERT INTO roles(name) VALUES('ROLE_ADMIN');
 ```
 <a href="https://spring.io/" target="blank">
 <img align="center" src="https://www.vectorlogo.zone/logos/springio/springio-icon.svg" alt="Spring" height="40" width="40" />
