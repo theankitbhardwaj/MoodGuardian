@@ -2,10 +2,10 @@ package com.bhardwaj.MoodGuardian.controller;
 
 import com.bhardwaj.MoodGuardian.model.EMood;
 import com.bhardwaj.MoodGuardian.model.Mood;
+import com.bhardwaj.MoodGuardian.payload.response.MessageResponse;
 import com.bhardwaj.MoodGuardian.security.services.UserDetailsImpl;
 import com.bhardwaj.MoodGuardian.services.MoodService;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -34,7 +34,7 @@ public class MoodController {
         LocalDate date = LocalDate.now();
 
         if(moodService.isAlreadySubmitted(userId,date)){
-            return ResponseEntity.badRequest().body("You have already submitted today's mood.");
+            return ResponseEntity.badRequest().body(new MessageResponse("You have already submitted today's mood."));
         }
 
         EMood moodValue = moodRequest.getFeeling();
@@ -44,8 +44,8 @@ public class MoodController {
         Mood mood = new Mood(moodValue, date, notes, userId);
 
         try {
-            moodService.saveMood(mood);
-            return ResponseEntity.ok(String.format("Mood saved successfully for user: %s",userDetails.getUsername()));
+            Mood savedMood = moodService.saveMood(mood);
+            return ResponseEntity.ok(savedMood);
         } catch (Exception ex) {
             return ResponseEntity.internalServerError().body("Internal Server Error.");
         }
@@ -58,7 +58,7 @@ public class MoodController {
         Long userId = userDetails.getId();
 
         try {
-            List<Mood> moodList = moodService.getMoodsByUserId(userId);
+            List<Mood> moodList = moodService.findMoodsByUserId(userId);
             return ResponseEntity.ok(moodList);
         } catch (Exception ex) {
             LoggerFactory.getLogger("MoodController").error(ex.getMessage());
@@ -72,14 +72,74 @@ public class MoodController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long userId = userDetails.getId();
 
-        Optional<Mood> mood = moodService.getMoodByIdAndUserId(id,userId);
-        if(mood.isPresent()){
-            return ResponseEntity.ok(mood.get());
-        } else {
-            if(!moodService.belongsToUserId(id,userId)){
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        try {
+            Optional<Mood> mood = moodService.findMoodByIdAndUserId(id,userId);
+            if(mood.isPresent()){
+                return ResponseEntity.ok(mood.get());
+            } else {
+                return ResponseEntity.notFound().build();
             }
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception ex){
+            LoggerFactory.getLogger("MoodController").error(ex.getMessage());
+            return ResponseEntity.internalServerError().body("Internal Server Error.");
+        }
+    }
+
+    @PutMapping("/mood/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> updateMoodById(@PathVariable(name = "id") long moodId, @RequestBody Mood moodRequest, Authentication authentication){
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        try {
+            Optional<Mood> currentMood = moodService.findMoodByIdAndUserId(moodId,userId);
+
+            if(currentMood.isPresent()){
+                Mood updatedMood = currentMood.get();
+
+                if(moodRequest.getFeeling() != null){
+                    updatedMood.setFeeling(moodRequest.getFeeling());
+                }
+
+                if(moodRequest.getNotes() != null){
+                    updatedMood.setNotes(moodRequest.getNotes());
+                }
+
+                try{
+                    updatedMood = moodService.saveMood(updatedMood);
+                    return ResponseEntity.ok(updatedMood);
+                } catch (Exception ex){
+                    LoggerFactory.getLogger("MoodController").error(ex.getMessage());
+                    return ResponseEntity.internalServerError().body("Internal Server Error.");
+                }
+
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch(Exception ex){
+            LoggerFactory.getLogger("MoodController").error(ex.getMessage());
+            return ResponseEntity.internalServerError().body("Internal Server Error.");
+        }
+    }
+
+    @DeleteMapping("/mood/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> deleteMoodById(@PathVariable long id, Authentication authentication){
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long userId = userDetails.getId();
+
+        try {
+            Optional<Mood> moodToBeDeleted = moodService.findMoodByIdAndUserId(id,userId);
+
+            if(moodToBeDeleted.isPresent()){
+                moodService.deleteMood(moodToBeDeleted.get());
+                return ResponseEntity.ok(new MessageResponse(String.format("Mood with id: %d deleted successfully.",id)));
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception ex){
+            LoggerFactory.getLogger("MoodController").error(ex.getMessage());
+            return ResponseEntity.internalServerError().body("Internal Server Error.");
         }
     }
 }

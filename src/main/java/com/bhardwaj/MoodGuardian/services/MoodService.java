@@ -14,11 +14,11 @@ public class MoodService {
     @Autowired
     MoodRepository moodRepository;
 
-    public void saveMood(Mood mood){
-        moodRepository.save(mood);
+    public Mood saveMood(Mood mood){
+        return moodRepository.save(mood);
     }
 
-    public List<Mood> getMoodsByUserId(Long userId){
+    public List<Mood> findMoodsByUserId(Long userId){
         return moodRepository.getMoodsByUserId(userId);
     }
 
@@ -27,12 +27,11 @@ public class MoodService {
         return mood!=null;
     }
 
-    public Optional<Mood> getMoodByIdAndUserId(Long moodId, Long userId){
+    public Optional<Mood> findMoodByIdAndUserId(Long moodId, Long userId){
         return moodRepository.findByIdAndUserId(moodId,userId);
     }
 
-    public boolean belongsToUserId(Long moodId,Long userId){
-        Optional<Mood> mood = moodRepository.findById(moodId);
-        return mood.isPresent() && mood.get().getUserId().equals(userId);
+    public void deleteMood(Mood mood){
+        moodRepository.delete(mood);
     }
 }
