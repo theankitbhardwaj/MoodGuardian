@@ -6,6 +6,7 @@ import com.bhardwaj.MoodGuardian.payload.response.MessageResponse;
 import com.bhardwaj.MoodGuardian.security.services.UserDetailsImpl;
 import com.bhardwaj.MoodGuardian.services.MoodService;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -53,12 +55,27 @@ public class MoodController {
 
     @GetMapping("/mood")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity<?> getAllMoods(Authentication authentication){
+    public ResponseEntity<?> getAllMoods(Authentication authentication,
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long userId = userDetails.getId();
 
         try {
             List<Mood> moodList = moodService.findMoodsByUserId(userId);
+
+            if(startDate != null){
+                moodList = moodList.stream()
+                        .filter(mood -> mood.getDate().isEqual(startDate) || mood.getDate().isAfter(startDate))
+                        .collect(Collectors.toList());
+            }
+
+            if(endDate != null){
+                moodList = moodList.stream()
+                        .filter(mood -> mood.getDate().isEqual(endDate) || mood.getDate().isBefore(endDate))
+                        .collect(Collectors.toList());
+            }
+
             return ResponseEntity.ok(moodList);
         } catch (Exception ex) {
             LoggerFactory.getLogger("MoodController").error(ex.getMessage());

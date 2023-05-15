@@ -37,12 +37,12 @@ Create mood for today. If mood for today's date already added it will throw erro
 ```http
   POST /api/v1/mood
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `feeling`      | `string` | **Required**. Mood value |
-| `notes`      | `string` |  Notes for today. |
+| Parameter | Type         | Description                       |
+| :-------- |:-------------| :-------------------------------- |
+| `feeling`      | `string/int` | **Required**. Mood value |
+| `notes`      | `string`     |  Notes for today. |
 
-Mood value can be VERY_SAD, SAD, NEUTRAL, HAPPY, VERY_HAPPY.
+Mood value can be VERY_SAD/0, SAD/1, NEUTRAL/2, HAPPY/3, VERY_HAPPY/4.
 
 You also need to authorize this request.
 
@@ -57,6 +57,18 @@ This will return all saved moods of current user.
 ```http
   GET /api/v1/mood
 ```
+
+#### Query Parameters
+
+| Parameter   | Type     | Description          |
+|:------------| :------- |:---------------------|
+| `startDate` | `string` | Filter by Start Date |
+| `endDate`   | `string` | Filter by End Date.  |
+
+```
+E.g.: /api/v1/mood?startDate=2023-05-05&endDate=2023-05-16
+```
+
 You also need to authorize this request.
 
 | Authorization | Type     | Description                       |
