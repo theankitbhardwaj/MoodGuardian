@@ -64,9 +64,10 @@ This will return all saved moods of current user.
 |:------------| :------- |:---------------------|
 | `startDate` | `string` | Filter by Start Date |
 | `endDate`   | `string` | Filter by End Date.  |
+| `feeling`   | `string` | Filter by Feeling.   |
 
 ```
-E.g.: /api/v1/mood?startDate=2023-05-05&endDate=2023-05-16
+E.g.: /api/v1/mood?startDate=2023-05-05&endDate=2023-05-16&feeling=very_sad
 ```
 
 You also need to authorize this request.

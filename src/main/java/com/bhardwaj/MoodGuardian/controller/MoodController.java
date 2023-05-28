@@ -57,7 +57,8 @@ public class MoodController {
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<?> getAllMoods(Authentication authentication,
                                          @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
-                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate) {
+                                         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate,
+                                         @RequestParam(required = false) EMood feeling) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long userId = userDetails.getId();
 
@@ -73,6 +74,12 @@ public class MoodController {
             if(endDate != null){
                 moodList = moodList.stream()
                         .filter(mood -> mood.getDate().isEqual(endDate) || mood.getDate().isBefore(endDate))
+                        .collect(Collectors.toList());
+            }
+
+            if(feeling != null){
+                moodList = moodList.stream()
+                        .filter(mood -> mood.getFeeling() == feeling)
                         .collect(Collectors.toList());
             }
 
