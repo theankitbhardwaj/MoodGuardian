@@ -11,6 +11,8 @@ import com.bhardwaj.MoodGuardian.repository.RoleRepository;
 import com.bhardwaj.MoodGuardian.repository.UserRepository;
 import com.bhardwaj.MoodGuardian.security.jwt.JwtUtils;
 import com.bhardwaj.MoodGuardian.security.services.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +31,7 @@ import java.util.Set;
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/v1/auth")
+@Tag(name = "Authentication")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -46,6 +49,10 @@ public class AuthController {
     JwtUtils jwtUtils;
 
 
+    @Operation(
+            description = "Sign In",
+            summary = "Endpoint used to sign in user"
+    )
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest){
         Authentication authentication = authenticationManager.authenticate(
@@ -62,6 +69,10 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
     }
 
+    @Operation(
+            description = "Sign Up",
+            summary = "Endpoint used to create a new user"
+    )
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest){
         if(userRepository.existsByUsername(signUpRequest.getUsername())){

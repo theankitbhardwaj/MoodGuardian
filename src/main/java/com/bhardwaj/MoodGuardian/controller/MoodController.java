@@ -5,6 +5,8 @@ import com.bhardwaj.MoodGuardian.model.Mood;
 import com.bhardwaj.MoodGuardian.payload.response.MessageResponse;
 import com.bhardwaj.MoodGuardian.security.services.UserDetailsImpl;
 import com.bhardwaj.MoodGuardian.services.MoodService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
+@Tag(name= "Mood")
 public class MoodController {
     private final MoodService moodService;
 
@@ -26,6 +29,10 @@ public class MoodController {
         this.moodService = moodService;
     }
 
+    @Operation(
+            description = "Create Mood",
+            summary = "Create mood for today. If mood for today's date already added it will throw error."
+    )
     @PostMapping("/mood")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<?> addMood(@RequestBody Mood moodRequest, Authentication authentication) {
@@ -53,6 +60,10 @@ public class MoodController {
         }
     }
 
+    @Operation(
+            description = "Get All Moods",
+            summary = "This will return all saved moods of current user. It also supports filters."
+    )
     @GetMapping("/mood")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<?> getAllMoods(Authentication authentication,
@@ -90,6 +101,10 @@ public class MoodController {
         }
     }
 
+    @Operation(
+            description = "Get Mood by ID",
+            summary = "This will return mood by mood id. This will only succeed if mood id belongs to authorized user."
+    )
     @GetMapping("/mood/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<?> getMoodByID(@PathVariable long id,Authentication authentication){
@@ -109,6 +124,10 @@ public class MoodController {
         }
     }
 
+    @Operation(
+            description = "Update Mood by ID",
+            summary = "Update any previously created mood by mood id. This will only succeed if mood id belongs to authorized user."
+    )
     @PutMapping("/mood/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<?> updateMoodById(@PathVariable(name = "id") long moodId, @RequestBody Mood moodRequest, Authentication authentication){
@@ -146,6 +165,10 @@ public class MoodController {
         }
     }
 
+    @Operation(
+            description = "Delete Mood by ID",
+            summary = "Delete any previously created mood by mood id. This will only succeed if mood id belongs to authorized user."
+    )
     @DeleteMapping("/mood/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<?> deleteMoodById(@PathVariable long id, Authentication authentication){

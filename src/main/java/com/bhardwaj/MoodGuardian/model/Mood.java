@@ -1,5 +1,6 @@
 package com.bhardwaj.MoodGuardian.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -7,16 +8,19 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "moods")
 public class Mood {
+    @Schema(hidden = true)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Schema(hidden = true)
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Enumerated(EnumType.STRING)
     private EMood feeling;
 
+    @Schema(hidden = true)
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
