@@ -20,16 +20,6 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 title = "OpenAPI Specification - MoodGuardian",
                 version = "1.0"
         ),
-        servers = {
-                @Server(
-                        description = "Local Env",
-                        url = "http://localhost:8080"
-                ),
-                @Server(
-                        description = "PROD Env",
-                        url = "https://moodguardian-api.onrender.com/"
-                )
-        },
         security = {
                 @SecurityRequirement(
                         name = "bearerAuth"
