@@ -1,5 +1,6 @@
 package com.bhardwaj.MoodGuardian.config;
 
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -16,9 +17,14 @@ import io.swagger.v3.oas.annotations.servers.Server;
                         name = "Ankit Bhardwaj",
                         email = "iamankitbhardwaj@gmail.com"
                 ),
-                description = "OpenAPI specification for MoodGuardian Application",
+                description = "OpenAPI specification for MoodGuardian Application.",
                 title = "OpenAPI Specification - MoodGuardian",
                 version = "1.0"
+        ),
+        externalDocs = @ExternalDocumentation(
+                description = "WARNING: Integer/Long values in response are not always correct ones, this is due to limitations of Javascript parsing BigInts.\n" +
+                        "To correctly test this API use application like Postman.",
+                url = "https://github.com/swagger-api/swagger-ui/issues/2030"
         ),
         security = {
                 @SecurityRequirement(
